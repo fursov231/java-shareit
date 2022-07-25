@@ -13,7 +13,7 @@ public interface ItemService {
 
     Item createItem(long ownerId, ItemDto item);
 
-    Item patchItem(long ownerId, long itemId, ItemDto itemDto);
+    Item updateItem(long ownerId, long itemId, ItemDto itemDto);
 
     boolean removeItem(long ownerId, long itemId);
 

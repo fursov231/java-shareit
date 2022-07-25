@@ -13,7 +13,7 @@ public interface UserRepository {
 
     User save(UserDto userDto);
 
-    User patch(long userId, UserDto userDto);
+    User update(long userId, UserDto userDto);
 
     boolean delete(long userId);
 }

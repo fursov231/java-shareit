@@ -3,9 +3,9 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.exception.ForbiddenException;
-import ru.practicum.shareit.item.exception.NotFoundException;
-import ru.practicum.shareit.item.exception.ValidationException;
+import ru.practicum.shareit.exception.ForbiddenException;
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -52,11 +52,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item patchItem(long ownerId, long itemId, ItemDto itemDto) {
+    public Item updateItem(long ownerId, long itemId, ItemDto itemDto) {
         Optional<Item> itemsOwner = itemStorage.findById(itemId);
         if (itemsOwner.isPresent()) {
             if (itemsOwner.get().getOwnerId() == ownerId) {
-                return itemStorage.patch(ownerId, itemId, itemDto);
+                return itemStorage.update(ownerId, itemId, itemDto);
             } else {
                 throw new ForbiddenException("Доступ на изменение по указанному ownerId запрещен");
             }

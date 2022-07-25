@@ -2,9 +2,9 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.exception.ValidationException;
-import ru.practicum.shareit.user.exception.ConflictException;
+import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 import ru.practicum.shareit.user.util.EmailValidator;
@@ -42,11 +42,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User patchUser(long userId, UserDto userDto) {
+    public User updateUser(long userId, UserDto userDto) {
         if (isEmailExist(userDto.getEmail())) {
             throw new ConflictException("Такой email уже существует");
         }
-            return userStorage.patch(userId, userDto);
+            return userStorage.update(userId, userDto);
     }
 
     @Override

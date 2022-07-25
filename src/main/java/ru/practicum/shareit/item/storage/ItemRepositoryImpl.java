@@ -3,7 +3,7 @@ package ru.practicum.shareit.item.storage;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.exception.NotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.util.ItemMapper;
 import ru.practicum.shareit.requests.ItemRequest;
@@ -59,7 +59,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @SneakyThrows
     @Override
-    public Item patch(long ownerId, long itemId, ItemDto itemDto) {
+    public Item update(long ownerId, long itemId, ItemDto itemDto) {
         Optional<Item> item = findById(itemId);
         if (item.isPresent()) {
             BeanInfo beanInfo = Introspector.getBeanInfo(ItemDto.class);

@@ -13,7 +13,7 @@ public interface ItemRepository {
 
     Item save(ItemDto itemDto);
 
-    Item patch(long ownerId, long itemId, ItemDto itemDto);
+    Item update(long ownerId, long itemId, ItemDto itemDto);
 
     boolean deleteByItemIdAndOwnerId(long ownerId, long itemId);
 

@@ -33,7 +33,7 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     public Item patchItem(@RequestHeader("X-Sharer-User-Id") long ownerId, @PathVariable long itemId,
                           @RequestBody ItemDto itemDto) {
-        return itemService.patchItem(ownerId, itemId, itemDto);
+        return itemService.updateItem(ownerId, itemId, itemDto);
     }
 
     @DeleteMapping

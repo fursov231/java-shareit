@@ -13,7 +13,7 @@ public interface UserService {
 
     User createUser(UserDto userDto);
 
-    User patchUser(long userId, UserDto userDto);
+    User updateUser(long userId, UserDto userDto);
 
     boolean removeUser(long userId);
 }

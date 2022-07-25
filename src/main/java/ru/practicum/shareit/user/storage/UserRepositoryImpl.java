@@ -38,7 +38,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @SneakyThrows
     @Override
-    public User patch(long userId, UserDto userDto) {
+    public User update(long userId, UserDto userDto) {
         Optional<User> oldUser = findById(userId);
         User patchedUser = User.builder().build();
         if (oldUser.isPresent()) {
