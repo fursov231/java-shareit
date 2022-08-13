@@ -11,9 +11,9 @@ public interface UserService {
 
     Optional<User> getUserById(long id);
 
-    User createUser(UserDto userDto);
+    User createUser(UserDto user);
 
-    User updateUser(long userId, UserDto userDto);
+    User updateUser(long userId, UserDto user);
 
-    boolean removeUser(long userId);
+    void removeUser(long userId);
 }
