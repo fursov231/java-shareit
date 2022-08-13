@@ -157,15 +157,4 @@ public class BookingServiceImpl implements BookingService {
         }
         return bookingsByState;
     }
-
-    private List<Booking> findBookingsByOwnerIdAndBookingsByState(long userId, List<Booking> bookingsByState) {
-        List<Booking> finalResult = new ArrayList<>();
-        for (var booking : bookingsByState) {
-            Optional<Item> ownersItem = itemRepository.findById(booking.getItem().getId());
-            if (ownersItem.isPresent() && ownersItem.get().getOwnerId().equals(userId)) {
-                finalResult.add(booking);
-            }
-        }
-        return finalResult;
-    }
 }
