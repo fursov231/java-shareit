@@ -2,12 +2,13 @@ package ru.practicum.shareit.item.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoWithTime;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/items")
@@ -16,13 +17,19 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<Item> getAllItems(@RequestHeader("X-Sharer-User-Id") long ownerId) {
+    public List<ItemDtoWithTime> getAllItems(@RequestHeader("X-Sharer-User-Id") long ownerId) {
         return itemService.getAllItemsByOwnerId(ownerId);
     }
 
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addNewComment(@RequestHeader("X-Sharer-User-Id") long ownerId,
+                                    @PathVariable long itemId, @RequestBody CommentDto commentDto) {
+        return itemService.addNewComment(ownerId, itemId, commentDto);
+    }
+
     @GetMapping("/{itemId}")
-    public Optional<Item> getItemById(@PathVariable long itemId) {
-        return itemService.getItemById(itemId);
+    public ItemDtoWithTime getItemById(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
+        return itemService.getItemById(userId, itemId);
     }
 
     @PostMapping
@@ -36,9 +43,9 @@ public class ItemController {
         return itemService.updateItem(ownerId, itemId, itemDto);
     }
 
-    @DeleteMapping
-    public boolean removeItem(@RequestHeader("X-Sharer-User-Id") long ownerId, @RequestBody long itemId) {
-        return itemService.removeItem(ownerId, itemId);
+    @DeleteMapping("/{itemId}")
+    public void removeItem(@RequestHeader("X-Sharer-User-Id") long ownerId, @PathVariable long itemId) {
+        itemService.removeItem(ownerId, itemId);
     }
 
     @GetMapping("/search")

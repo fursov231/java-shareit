@@ -2,60 +2,60 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 import ru.practicum.shareit.user.util.EmailValidator;
+import ru.practicum.shareit.user.util.UserMapper;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
-    private final UserRepository userStorage;
+    private final UserRepository userRepository;
 
     @Override
     public List<User> getAllUsers() {
-        return userStorage.findAll();
+        return userRepository.findAll();
     }
 
     @Override
     public Optional<User> getUserById(long id) {
-        return userStorage.findById(id);
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            return user;
+        } else {
+            throw new NotFoundException("Пользователь не найден");
+        }
     }
 
     @Override
+    @Transactional
     public User createUser(UserDto userDto) {
-        if (isEmailExist(userDto.getEmail())) {
-            throw new ConflictException("Такой email уже существует");
-        }
         if (userDto.getEmail() == null) {
             throw new ValidationException("Не указан email");
         }
         if (!EmailValidator.isValid(userDto.getEmail())) {
             throw new ValidationException("Указан неверный email");
         }
-        return userStorage.save(userDto);
+        return userRepository.save(UserMapper.toUser(userDto));
     }
 
+    @Transactional
     @Override
     public User updateUser(long userId, UserDto userDto) {
-        if (isEmailExist(userDto.getEmail())) {
-            throw new ConflictException("Такой email уже существует");
-        }
-            return userStorage.update(userId, userDto);
+        return userRepository.updateById(userId, UserMapper.toUser(userDto));
     }
 
+    @Transactional
     @Override
-    public boolean removeUser(long userId) {
-        return userStorage.delete(userId);
-    }
-
-    private boolean isEmailExist(String email) {
-        List<User> users = userStorage.findAll();
-        return users.stream().anyMatch(e -> e.getEmail().equalsIgnoreCase(email));
+    public void removeUser(long userId) {
+        userRepository.deleteById(userId);
     }
 }
