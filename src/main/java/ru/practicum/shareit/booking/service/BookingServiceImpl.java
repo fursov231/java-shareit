@@ -8,7 +8,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.booking.util.BookingMapper;
-import ru.practicum.shareit.booking.util.BookingStatus;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exception.NotAvailableException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;

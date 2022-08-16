@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.booking.util.BookingState;
-import ru.practicum.shareit.booking.util.BookingStatus;
+import ru.practicum.shareit.booking.dto.BookingState;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exception.UnsupportedStatusException;
 
 import java.util.Arrays;
