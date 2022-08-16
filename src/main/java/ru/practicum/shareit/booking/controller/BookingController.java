@@ -43,7 +43,7 @@ public class BookingController {
 
     @GetMapping
     public List<Booking> getAllByState(@RequestHeader("X-Sharer-User-Id") long userId, @RequestParam(name = "state", defaultValue = "ALL") String state) {
-        if (state.equalsIgnoreCase("ALL") || isBookingState(state)) {
+        if (isBookingState(state)) {
             return bookingService.getByState(userId, state);
         }
         throw new UnsupportedStatusException("Указан неверный параметр в URI");
@@ -51,7 +51,7 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<Booking> getOwnersBookings(@RequestHeader("X-Sharer-User-Id") long ownerId, @RequestParam(name = "state", defaultValue = "ALL") String state) {
-        if (state.equalsIgnoreCase("ALL") || isBookingState(state)) {
+        if (isBookingState(state)) {
             return bookingService.getByOwner(ownerId, state);
         }
         throw new UnsupportedStatusException("Указан неверный параметр в URI");
