@@ -15,6 +15,4 @@ public interface BookingRepositoryCustom {
     List<Booking> findByOwnerIdAndStartIsBeforeAndEndIsAfter(Long ownerId);
 
     List<Booking> findAllByOwner(Long ownerId);
-
-    List<Booking> findByOwnerId(long ownerId);
 }
