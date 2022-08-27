@@ -1,10 +1,9 @@
 package ru.practicum.shareit.requests.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.requests.model.ItemRequest;
 import ru.practicum.shareit.requests.dto.ItemRequestDto;
+import ru.practicum.shareit.requests.model.ItemRequest;
 import ru.practicum.shareit.requests.service.ItemRequestService;
 
 import java.util.List;
