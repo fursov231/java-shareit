@@ -1,9 +1,6 @@
-package ru.practicum.shareit.requests;
+package ru.practicum.shareit.requests.model;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,7 +8,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "requests", schema = "public")
 public class ItemRequest {
@@ -21,8 +20,8 @@ public class ItemRequest {
     private String description;
 
     @Column(name = "requestor_id")
-    private Long requestorId;
+    private Long requestor;
 
     @Column(name = "created_date")
-    private LocalDateTime createdDate;
+    private LocalDateTime created;
 }

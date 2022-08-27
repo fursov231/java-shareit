@@ -3,10 +3,10 @@ package ru.practicum.shareit.booking.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.dto.BookingState;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.UnsupportedStatusException;
 
 import java.util.Arrays;
@@ -42,17 +42,23 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<Booking> getAllByState(@RequestHeader("X-Sharer-User-Id") long userId, @RequestParam(name = "state", defaultValue = "ALL") String state) {
+    public List<Booking> getAllByState(@RequestHeader("X-Sharer-User-Id") long userId,
+                                       @RequestParam(name = "state", defaultValue = "ALL") String state,
+                                       @RequestParam(name = "from", defaultValue = "0") int from,
+                                       @RequestParam(name = "size", defaultValue = "10") int size) {
         if (isBookingState(state)) {
-            return bookingService.getByState(userId, state);
+            return bookingService.getByState(userId, state, from, size);
         }
         throw new UnsupportedStatusException("Указан неверный параметр в URI");
     }
 
     @GetMapping("/owner")
-    public List<Booking> getOwnersBookings(@RequestHeader("X-Sharer-User-Id") long ownerId, @RequestParam(name = "state", defaultValue = "ALL") String state) {
+    public List<Booking> getOwnersBookings(@RequestHeader("X-Sharer-User-Id") long ownerId,
+                                           @RequestParam(name = "state", defaultValue = "ALL") String state,
+                                           @RequestParam(name = "from", defaultValue = "0") int from,
+                                           @RequestParam(name = "size", defaultValue = "10") int size) {
         if (isBookingState(state)) {
-            return bookingService.getByOwner(ownerId, state);
+            return bookingService.getByOwner(ownerId, state, from, size);
         }
         throw new UnsupportedStatusException("Указан неверный параметр в URI");
     }

@@ -9,6 +9,7 @@ public class ItemMapper {
     public static ItemDto toItemDto(Item item) {
         return ItemDto.builder()
                 .name(item.getName())
+                .requestId(item.getRequestId())
                 .description(item.getDescription())
                 .available(item.getAvailable())
                 .build();
@@ -17,6 +18,7 @@ public class ItemMapper {
     public static Item dtoToItem(ItemDto itemDto) {
         return Item.builder()
                 .name(itemDto.getName())
+                .requestId(itemDto.getRequestId())
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
                 .build();

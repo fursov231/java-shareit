@@ -12,6 +12,10 @@ public class BookingMapper {
                 .build();
     }
 
+    public static BookingDto toDto(Booking booking) {
+        return new BookingDto(booking.getItem().getId(), booking.getStart(), booking.getEnd());
+    }
+
     public static BookingDtoWithBookerId toBookingDtoWithBookerId(Booking booking) {
         return BookingDtoWithBookerId.builder()
                 .id(booking.getId())

@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,9 +61,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDtoWithTime> getAllItemsByOwnerId(long ownerId) {
+    public List<ItemDtoWithTime> getAllItemsByOwnerId(long ownerId, int from, int size) {
         BooleanExpression byOwnerId = QItem.item.ownerId.eq(ownerId);
-        Iterable<Item> iterableItemsList = itemRepository.findAll(byOwnerId);
+        Iterable<Item> iterableItemsList = itemRepository.findAll(byOwnerId, PageRequest.of(from,size));
+
         List<Item> itemsList = new ArrayList<>();
         iterableItemsList.forEach(itemsList::add);
 
@@ -93,7 +95,8 @@ public class ItemServiceImpl implements ItemService {
             itemsDtoList.add(itemDtoWithTime);
         }
 
-        boolean isAnotherBookingsNotExist = itemsDtoList.stream().allMatch(e -> e.getNextBooking() == null && e.getLastBooking() == null);
+        boolean isAnotherBookingsNotExist = itemsDtoList.stream()
+                .allMatch(e -> e.getNextBooking() == null && e.getLastBooking() == null);
         if (isAnotherBookingsNotExist) {
             return itemsDtoList;
         }
@@ -112,8 +115,10 @@ public class ItemServiceImpl implements ItemService {
         BookingDtoWithBookerId nextBookingTimeDto = null;
         if (item.get().getOwnerId() == userId) {
             for (var booking : bookings) {
-                List<Booking> lastBooking = bookingRepository.findByItemIdAndEndIsBefore(item.get().getId(), booking.getStart(), Sort.by(Sort.Direction.DESC, "start"));
-                List<Booking> nextBooking = bookingRepository.findByItemIdAndStartIsAfter(item.get().getId(), booking.getEnd(), Sort.by(Sort.Direction.ASC, "end"));
+                List<Booking> lastBooking = bookingRepository.findByItemIdAndEndIsBefore(item.get().getId(),
+                        booking.getStart(), Sort.by(Sort.Direction.DESC, "start"));
+                List<Booking> nextBooking = bookingRepository.findByItemIdAndStartIsAfter(item.get().getId(),
+                        booking.getEnd(), Sort.by(Sort.Direction.ASC, "end"));
                 if (!lastBooking.isEmpty()) {
                     lastBookingTimeDto = BookingMapper.toBookingDtoWithBookerId(lastBooking.get(0));
                 }
@@ -155,12 +160,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> searchItem(long ownerId, String text) {
+    public List<Item> searchItem(long ownerId, String text, int from, int size) {
         if (text.isBlank()) {
             return Collections.EMPTY_LIST;
         }
-
-        return itemRepository.search(text);
+        return itemRepository.search(text, PageRequest.of(from, size));
     }
 
     @Transactional
@@ -189,7 +193,7 @@ public class ItemServiceImpl implements ItemService {
                 }
             }
             if (newCommentDto == null) {
-                throw new ValidationException("Пользователь с данным userId не может оставить отзыв на данный предмет");
+                throw new ValidationException("Передан неверный userId или itemId для добавления отзыва");
             }
         } else {
             throw new NotFoundException("Предмет или пользователь не найден");
