@@ -75,7 +75,7 @@ class BookingControllerTest {
     }
 
     @Test
-    void shouldBeConfirmed() throws Exception {
+    void shouldBeConfirmedApprove() throws Exception {
         Booking booking = makeBooking(1L);
         booking.setStatus(BookingStatus.APPROVED);
 
@@ -93,6 +93,38 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.status", is(booking.getStatus().toString())))
                 .andExpect(jsonPath("$.item.name", is(booking.getItem().getName())))
                 .andExpect(jsonPath("$.start", is("2023-01-01T01:01:00")));
+    }
+
+    @Test
+    void shouldBeConfirmedReject() throws Exception {
+        Booking booking = makeBooking(1L);
+        booking.setStatus(BookingStatus.REJECTED);
+
+        when(bookingService.confirmRequest(anyLong(), anyLong(), any()))
+                .thenReturn(booking);
+
+        mvc.perform(patch("/bookings/1")
+                        .param("approved", "false")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.status", is(booking.getStatus().toString())))
+                .andExpect(jsonPath("$.item.name", is(booking.getItem().getName())))
+                .andExpect(jsonPath("$.start", is("2023-01-01T01:01:00")));
+    }
+
+    @Test
+    void shouldBeThrownExceptionWhenConfirmedWithWrongParam() throws Exception {
+        mvc.perform(patch("/bookings/1")
+                        .param("approved", "ok")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
@@ -132,6 +164,16 @@ class BookingControllerTest {
     }
 
     @Test
+    void shouldBeThrownExceptionWhenFoundAllByStateWithWrongBookingState() throws Exception {
+        mvc.perform(get("/bookings")
+                        .param("state", "false")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("X-Sharer-User-Id", 1)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
     void shouldBeReturnedOwners() throws Exception {
         Booking booking1 = makeBooking(1L);
         Booking booking2 = makeBooking(2L);
@@ -147,6 +189,16 @@ class BookingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id", is(1)))
                 .andExpect(jsonPath("$.[1].id", is(2)));
+    }
+
+    @Test
+    void shouldBeThrownExceptionWhenFoundAllByOwnerWithWrongBookingState() throws Exception {
+        mvc.perform(get("/bookings/owner")
+                        .param("state", "false")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("X-Sharer-User-Id", 1)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
     }
 
     private Booking makeBooking(long id) {
