@@ -14,4 +14,12 @@ public class ItemDto {
     private String description;
     private long requestId;
     private Boolean available;
+
+    @Data
+    @AllArgsConstructor
+    public static class ItemResponseDto {
+        private Long id;
+        private String name;
+    }
+
 }

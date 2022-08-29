@@ -9,7 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
@@ -217,9 +218,9 @@ class ItemServiceImplTest {
     @Test
     void test16_shouldBeAddedNewComment() throws InterruptedException {
         Item item = itemService.createItem(user1.getId(), makeItemDto("device", "analytics tool", 1, true));
-        BookingDto bookingDto = new BookingDto(item.getId(),
+        BookingRequestDto bookingRequestDto = new BookingRequestDto(item.getId(),
                 LocalDateTime.now().plusSeconds(1), LocalDateTime.now().plusSeconds(2));
-        Booking booking = bookingService.addNewBooking(user2.getId(), bookingDto);
+        BookingResponseDto booking = bookingService.addNewBooking(user2.getId(), bookingRequestDto);
         bookingService.confirmRequest(user1.getId(), booking.getId(), BookingStatus.APPROVED);
         CommentDto commentDto = CommentDto.builder().text("looks nice").build();
         Thread.sleep(2000);

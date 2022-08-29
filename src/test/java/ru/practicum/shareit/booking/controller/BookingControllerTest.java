@@ -59,7 +59,7 @@ class BookingControllerTest {
         Booking booking = makeBooking(1L);
 
         when(bookingService.addNewBooking(anyLong(), ArgumentMatchers.any()))
-                .thenReturn(booking);
+                .thenReturn(BookingMapper.toBookingResponseDto(booking));
 
         mvc.perform(post("/bookings")
                         .content(mapper.writeValueAsString(BookingMapper.toDto(booking)))
@@ -80,7 +80,7 @@ class BookingControllerTest {
         booking.setStatus(BookingStatus.APPROVED);
 
         when(bookingService.confirmRequest(anyLong(), anyLong(), any()))
-                .thenReturn(booking);
+                .thenReturn(BookingMapper.toBookingResponseDto(booking));
 
         mvc.perform(patch("/bookings/1")
                         .param("approved", "true")
@@ -101,7 +101,7 @@ class BookingControllerTest {
         booking.setStatus(BookingStatus.REJECTED);
 
         when(bookingService.confirmRequest(anyLong(), anyLong(), any()))
-                .thenReturn(booking);
+                .thenReturn(BookingMapper.toBookingResponseDto(booking));
 
         mvc.perform(patch("/bookings/1")
                         .param("approved", "false")
@@ -132,7 +132,7 @@ class BookingControllerTest {
         Booking booking = makeBooking(1L);
 
         when(bookingService.getInfoById(anyLong(), anyLong()))
-                .thenReturn(booking);
+                .thenReturn(BookingMapper.toBookingResponseDto(booking));
 
         mvc.perform(get("/bookings/1")
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -151,7 +151,7 @@ class BookingControllerTest {
         Booking booking2 = makeBooking(2L);
 
         when(bookingService.getByState(anyLong(), anyString(), any()))
-                .thenReturn(List.of(booking1, booking2));
+                .thenReturn(List.of(BookingMapper.toBookingResponseDto(booking1), BookingMapper.toBookingResponseDto(booking2)));
 
         mvc.perform(get("/bookings")
                         .param("state", "ALL")
@@ -179,7 +179,7 @@ class BookingControllerTest {
         Booking booking2 = makeBooking(2L);
 
         when(bookingService.getByOwner(anyLong(), anyString(), any()))
-                .thenReturn(List.of(booking1, booking2));
+                .thenReturn(List.of(BookingMapper.toBookingResponseDto(booking1), BookingMapper.toBookingResponseDto(booking2)));
 
         mvc.perform(get("/bookings/owner")
                         .param("state", "ALL")

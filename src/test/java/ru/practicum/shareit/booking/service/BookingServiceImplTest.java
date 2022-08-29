@@ -9,7 +9,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -62,8 +63,8 @@ class BookingServiceImplTest {
 
     @Test
     void shouldBeAdded() {
-        BookingDto bookingDto = makeBookingDto();
-        bookingService.addNewBooking(user2.getId(), bookingDto);
+        BookingRequestDto bookingRequestDto = makeBookingDto();
+        bookingService.addNewBooking(user2.getId(), bookingRequestDto);
 
         TypedQuery<Booking> query = em.createQuery("Select b from Booking b where b.id = :id", Booking.class);
         Booking result = query.setParameter("id", 1L).getSingleResult();
@@ -77,8 +78,8 @@ class BookingServiceImplTest {
 
     @Test
     void shouldBeConfirmed() {
-        BookingDto bookingDto = makeBookingDto();
-        Booking savedBooking = bookingService.addNewBooking(user2.getId(), bookingDto);
+        BookingRequestDto bookingRequestDto = makeBookingDto();
+        BookingResponseDto savedBooking = bookingService.addNewBooking(user2.getId(), bookingRequestDto);
         bookingService.confirmRequest(user1.getId(), savedBooking.getId(), BookingStatus.APPROVED);
 
         TypedQuery<Booking> query = em.createQuery("Select b from Booking b where b.id = :id", Booking.class);
@@ -90,9 +91,9 @@ class BookingServiceImplTest {
 
     @Test
     void shouldBeReturnedById() {
-        BookingDto bookingDto = makeBookingDto();
-        bookingService.addNewBooking(user2.getId(), bookingDto);
-        Booking booking = bookingService.getInfoById(user2.getId(), 1L);
+        BookingRequestDto bookingRequestDto = makeBookingDto();
+        bookingService.addNewBooking(user2.getId(), bookingRequestDto);
+        BookingResponseDto booking = bookingService.getInfoById(user2.getId(), 1L);
 
         TypedQuery<Booking> query = em.createQuery("Select b from Booking b where b.id = :id", Booking.class);
         Booking result = query.setParameter("id", 1L).getSingleResult();
@@ -103,12 +104,12 @@ class BookingServiceImplTest {
 
     @Test
     void shouldBeReturnedByState() {
-        BookingDto bookingDto = makeBookingDto();
-        bookingService.addNewBooking(user2.getId(), bookingDto);
+        BookingRequestDto bookingRequestDto = makeBookingDto();
+        bookingService.addNewBooking(user2.getId(), bookingRequestDto);
         int from = 0;
         int size = 10;
         PageRequest pageRequest = PageRequest.of(from / size, size);
-        List<Booking> bookings = bookingService.getByState(user2.getId(), "FUTURE", pageRequest);
+        List<BookingResponseDto> bookings = bookingService.getByState(user2.getId(), "FUTURE", pageRequest);
 
         TypedQuery<Booking> query = em.createQuery("Select b from Booking b where b.status = :status", Booking.class);
         List<Booking> result = query.setParameter("status", BookingStatus.WAITING).getResultList();
@@ -119,13 +120,13 @@ class BookingServiceImplTest {
 
     @Test
     void shouldBeReturnedOwners() {
-        BookingDto bookingDto = makeBookingDto();
-        Booking addedBooking = bookingService.addNewBooking(user2.getId(), bookingDto);
+        BookingRequestDto bookingRequestDto = makeBookingDto();
+        BookingResponseDto addedBooking = bookingService.addNewBooking(user2.getId(), bookingRequestDto);
         bookingService.confirmRequest(user1.getId(), addedBooking.getId(), BookingStatus.APPROVED);
         int from = 0;
         int size = 10;
         PageRequest pageRequest = PageRequest.of(from / size, size);
-        List<Booking> bookings = bookingService.getByOwner(user1.getId(), "ALL", pageRequest);
+        List<BookingResponseDto> bookings = bookingService.getByOwner(user1.getId(), "ALL", pageRequest);
 
         TypedQuery<Booking> query = em.createQuery("Select b from Booking b where b.item.ownerId = :ownerId", Booking.class);
         List<Booking> result = query.setParameter("ownerId", user1.getId()).getResultList();
@@ -134,7 +135,7 @@ class BookingServiceImplTest {
         assertThat(result.get(0).getStatus(), equalTo(bookings.get(0).getStatus()));
     }
 
-    private BookingDto makeBookingDto() {
-        return new BookingDto(1L, LocalDateTime.of(2023, 1, 1, 1, 1), LocalDateTime.of(2024, 1, 1, 1, 1));
+    private BookingRequestDto makeBookingDto() {
+        return new BookingRequestDto(1L, LocalDateTime.of(2023, 1, 1, 1, 1), LocalDateTime.of(2024, 1, 1, 1, 1));
     }
 }

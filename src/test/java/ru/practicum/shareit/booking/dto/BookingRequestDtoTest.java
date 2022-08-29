@@ -11,24 +11,24 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @JsonTest
-class BookingDtoTest {
+class BookingRequestDtoTest {
     @Autowired
-    private JacksonTester<BookingDto> json;
+    private JacksonTester<BookingRequestDto> json;
 
 
     @Test
     void testBookingDto() throws Exception {
-        BookingDto bookingDto = makeBookingDto();
+        BookingRequestDto bookingRequestDto = makeBookingDto();
 
-        JsonContent<BookingDto> result = json.write(bookingDto);
+        JsonContent<BookingRequestDto> result = json.write(bookingRequestDto);
 
         assertThat(result).extractingJsonPathNumberValue("$.itemId").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.start").isEqualTo("2022-01-01T01:01:00");
         assertThat(result).extractingJsonPathStringValue("$.end").isEqualTo("2022-02-02T02:02:00");
     }
 
-    private BookingDto makeBookingDto() {
-        return new BookingDto(1L, LocalDateTime.of(2022, 1, 1, 1, 1), LocalDateTime.of(2022, 2, 2, 2, 2));
+    private BookingRequestDto makeBookingDto() {
+        return new BookingRequestDto(1L, LocalDateTime.of(2022, 1, 1, 1, 1), LocalDateTime.of(2022, 2, 2, 2, 2));
     }
 
 }

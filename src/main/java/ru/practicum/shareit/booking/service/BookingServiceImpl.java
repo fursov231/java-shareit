@@ -6,7 +6,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.storage.BookingRepository;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,12 +36,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public Booking addNewBooking(long userId, BookingDto bookingDto) {
+    public BookingResponseDto addNewBooking(long userId, BookingRequestDto bookingRequestDto) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new IllegalArgumentException("Пользователь с таким id не существует");
         }
-        Optional<Item> item = itemRepository.findById(bookingDto.getItemId());
+        Optional<Item> item = itemRepository.findById(bookingRequestDto.getItemId());
         if (item.isPresent()) {
             if (item.get().getOwnerId() == userId) {
                 throw new NotFoundException("Бронирование данного предмета по указанному ownerId недоступно");
@@ -51,20 +53,20 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException("Предлагаемый к бронированию предмет не существует");
         }
         LocalDateTime now = LocalDateTime.now();
-        if (bookingDto.getStart().isBefore(now) || bookingDto.getEnd().isBefore(now)) {
+        if (bookingRequestDto.getStart().isBefore(now) || bookingRequestDto.getEnd().isBefore(now)) {
             throw new ValidationException("Время бронирования не может быть в прошлом");
         }
-        Booking booking = BookingMapper.dtoToBooking(bookingDto);
+        Booking booking = BookingMapper.dtoToBooking(bookingRequestDto);
         booking.setItem(item.get());
         booking.setStatus(BookingStatus.WAITING);
         booking.setBooker(user.get());
 
-        return bookingRepository.save(booking);
+        return BookingMapper.toBookingResponseDto(bookingRepository.save(booking));
     }
 
     @Override
     @Transactional
-    public Booking confirmRequest(long userId, long bookingId, BookingStatus status) {
+    public BookingResponseDto confirmRequest(long userId, long bookingId, BookingStatus status) {
         Optional<Booking> booking = bookingRepository.findById(bookingId);
         Optional<Item> targetItem;
         if (booking.isPresent()) {
@@ -85,16 +87,16 @@ public class BookingServiceImpl implements BookingService {
         } else {
             throw new NotFoundException("Указанного бронирования не найдено");
         }
-        return booking.get();
+        return BookingMapper.toBookingResponseDto(booking.get());
     }
 
     @Override
-    public Booking getInfoById(long userId, long bookingId) {
+    public BookingResponseDto getInfoById(long userId, long bookingId) {
         Optional<Booking> booking = bookingRepository.findById(bookingId);
         if (booking.isPresent()) {
             Optional<Item> item = itemRepository.findById(booking.get().getItem().getId());
             if (item.get().getOwnerId() == userId || booking.get().getBooker().getId() == userId) {
-                return booking.get();
+                return BookingMapper.toBookingResponseDto(booking.get());
             } else {
                 throw new NotFoundException("Данный заказ по указанному ownerId не найден");
             }
@@ -103,7 +105,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getByState(long userId, String state, Pageable pageable) {
+    public List<BookingResponseDto> getByState(long userId, String state, Pageable pageable) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new NotFoundException("Пользователя с таким id не существует");
@@ -131,11 +133,11 @@ public class BookingServiceImpl implements BookingService {
             case "ALL":
                 bookingsByState = bookingRepository.findAllByBookerIdOrderByStartDesc(userId, pageable);
         }
-        return bookingsByState.getContent();
+        return bookingsByState.getContent().stream().map(BookingMapper::toBookingResponseDto).collect(Collectors.toList());
     }
 
     @Override
-    public List<Booking> getByOwner(long ownerId, String state, Pageable pageable) {
+    public List<BookingResponseDto> getByOwner(long ownerId, String state, Pageable pageable) {
         Optional<User> owner = userRepository.findById(ownerId);
         if (owner.isEmpty()) {
             throw new NotFoundException("Пользователя с таким id не существует");
@@ -158,6 +160,6 @@ public class BookingServiceImpl implements BookingService {
             case "ALL":
                 bookingsByState = bookingRepository.findByOwnerId(ownerId, pageable);
         }
-        return bookingsByState;
+        return bookingsByState.stream().map(BookingMapper::toBookingResponseDto).collect(Collectors.toList());
     }
 }
