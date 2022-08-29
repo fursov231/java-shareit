@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,7 +105,10 @@ class BookingServiceImplTest {
     void shouldBeReturnedByState() {
         BookingDto bookingDto = makeBookingDto();
         bookingService.addNewBooking(user2.getId(), bookingDto);
-        List<Booking> bookings = bookingService.getByState(user2.getId(), "FUTURE", 0, 10);
+        int from = 0;
+        int size = 10;
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        List<Booking> bookings = bookingService.getByState(user2.getId(), "FUTURE", pageRequest);
 
         TypedQuery<Booking> query = em.createQuery("Select b from Booking b where b.status = :status", Booking.class);
         List<Booking> result = query.setParameter("status", BookingStatus.WAITING).getResultList();
@@ -116,9 +120,12 @@ class BookingServiceImplTest {
     @Test
     void shouldBeReturnedOwners() {
         BookingDto bookingDto = makeBookingDto();
-       Booking addedBooking = bookingService.addNewBooking(user2.getId(), bookingDto);
+        Booking addedBooking = bookingService.addNewBooking(user2.getId(), bookingDto);
         bookingService.confirmRequest(user1.getId(), addedBooking.getId(), BookingStatus.APPROVED);
-        List<Booking> bookings = bookingService.getByOwner(user1.getId(), "ALL", 0, 10);
+        int from = 0;
+        int size = 10;
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        List<Booking> bookings = bookingService.getByOwner(user1.getId(), "ALL", pageRequest);
 
         TypedQuery<Booking> query = em.createQuery("Select b from Booking b where b.item.ownerId = :ownerId", Booking.class);
         List<Booking> result = query.setParameter("ownerId", user1.getId()).getResultList();

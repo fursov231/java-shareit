@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -10,7 +11,6 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.booking.util.BookingMapper;
-import ru.practicum.shareit.booking.util.OffsetLimitPageable;
 import ru.practicum.shareit.exception.NotAvailableException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
@@ -103,7 +103,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getByState(long userId, String state, int from, int size) {
+    public List<Booking> getByState(long userId, String state, Pageable pageable) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new NotFoundException("Пользователя с таким id не существует");
@@ -114,49 +114,49 @@ public class BookingServiceImpl implements BookingService {
             case "WAITING":
             case "REJECTED":
                 bookingsByState = bookingRepository.findByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.valueOf(state),
-                        OffsetLimitPageable.of(from, size));
+                        pageable);
                 break;
             case "PAST":
                 bookingsByState = bookingRepository.findByBookerIdAndEndIsBeforeOrderByStartDesc(userId, LocalDateTime.now(),
-                        OffsetLimitPageable.of(from, size));
+                        pageable);
                 break;
             case "CURRENT":
                 bookingsByState = bookingRepository.findByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(userId,
-                        LocalDateTime.now(), LocalDateTime.now(), OffsetLimitPageable.of(from, size));
+                        LocalDateTime.now(), LocalDateTime.now(), pageable);
                 break;
             case "FUTURE":
                 bookingsByState = bookingRepository.findByBookerIdAndStartIsAfterOrderByStartDesc(userId, LocalDateTime.now(),
-                        OffsetLimitPageable.of(from, size));
+                        pageable);
                 break;
             case "ALL":
-                bookingsByState = bookingRepository.findAllByBookerIdOrderByStartDesc(userId, OffsetLimitPageable.of(from, size));
+                bookingsByState = bookingRepository.findAllByBookerIdOrderByStartDesc(userId, pageable);
         }
         return bookingsByState.getContent();
     }
 
     @Override
-    public List<Booking> getByOwner(long ownerId, String state, int from, int size) {
+    public List<Booking> getByOwner(long ownerId, String state, Pageable pageable) {
         Optional<User> owner = userRepository.findById(ownerId);
         if (owner.isEmpty()) {
             throw new NotFoundException("Пользователя с таким id не существует");
         }
-        List<Booking> bookingsByState = bookingRepository.findByOwnerId(ownerId, OffsetLimitPageable.of(from, size));
+        List<Booking> bookingsByState = bookingRepository.findByOwnerId(ownerId, pageable);
         switch (state) {
             case "WAITING":
             case "REJECTED":
-                bookingsByState = bookingRepository.findByOwnerIdAndStatus(ownerId, BookingStatus.valueOf(state), OffsetLimitPageable.of(from, size));
+                bookingsByState = bookingRepository.findByOwnerIdAndStatus(ownerId, BookingStatus.valueOf(state), pageable);
                 break;
             case "PAST":
-                bookingsByState = bookingRepository.findByOwnerIdAndEndIsBefore(ownerId, OffsetLimitPageable.of(from, size));
+                bookingsByState = bookingRepository.findByOwnerIdAndEndIsBefore(ownerId, pageable);
                 break;
             case "CURRENT":
-                bookingsByState = bookingRepository.findByOwnerIdAndStartIsBeforeAndEndIsAfter(ownerId, OffsetLimitPageable.of(from, size));
+                bookingsByState = bookingRepository.findByOwnerIdAndStartIsBeforeAndEndIsAfter(ownerId, pageable);
                 break;
             case "FUTURE":
-                bookingsByState = bookingRepository.findByOwnerIdAndStartIsAfter(ownerId, OffsetLimitPageable.of(from, size));
+                bookingsByState = bookingRepository.findByOwnerIdAndStartIsAfter(ownerId, pageable);
                 break;
             case "ALL":
-                bookingsByState = bookingRepository.findByOwnerId(ownerId, OffsetLimitPageable.of(from, size));
+                bookingsByState = bookingRepository.findByOwnerId(ownerId, pageable);
         }
         return bookingsByState;
     }

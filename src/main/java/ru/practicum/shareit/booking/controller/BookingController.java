@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingState;
@@ -8,6 +9,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.UnsupportedStatusException;
+import ru.practicum.shareit.exception.ValidationException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,8 +48,12 @@ public class BookingController {
                                        @RequestParam(name = "state", defaultValue = "ALL") String state,
                                        @RequestParam(name = "from", defaultValue = "0") int from,
                                        @RequestParam(name = "size", defaultValue = "10") int size) {
+        if (from < 0) {
+            throw new ValidationException("Значение from не может быть отрицательным");
+        }
         if (isBookingState(state)) {
-            return bookingService.getByState(userId, state, from, size);
+            PageRequest pageRequest = PageRequest.of(from / size, size);
+            return bookingService.getByState(userId, state, pageRequest);
         }
         throw new UnsupportedStatusException("Указан неверный параметр в URI");
     }
@@ -57,8 +63,12 @@ public class BookingController {
                                            @RequestParam(name = "state", defaultValue = "ALL") String state,
                                            @RequestParam(name = "from", defaultValue = "0") int from,
                                            @RequestParam(name = "size", defaultValue = "10") int size) {
+        if (from < 0) {
+            throw new ValidationException("Значение from не может быть отрицательным");
+        }
         if (isBookingState(state)) {
-            return bookingService.getByOwner(ownerId, state, from, size);
+            PageRequest pageRequest = PageRequest.of(from / size, size);
+            return bookingService.getByOwner(ownerId, state, pageRequest);
         }
         throw new UnsupportedStatusException("Указан неверный параметр в URI");
     }

@@ -6,11 +6,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.booking.util.OffsetLimitPageable;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -48,8 +48,11 @@ class BookingRepositoryImplTest {
     void shouldBeFoundByOwnerIdAndEndIsBefore() {
         bookingRepository.save(makeBooking(1L, LocalDateTime.of(2023, 1, 1, 1, 1), LocalDateTime.of(2023, 2, 2, 2, 2)));
         bookingRepository.save(makeBooking(2L, LocalDateTime.of(2022, 1, 1, 1, 1), LocalDateTime.of(2022, 2, 2, 2, 2)));
+        int from = 0;
+        int size = 10;
 
-        List<Booking> list = bookingRepository.findByOwnerIdAndEndIsBefore(1L, OffsetLimitPageable.of(0, 10));
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        List<Booking> list = bookingRepository.findByOwnerIdAndEndIsBefore(1L, pageRequest);
 
         Assertions.assertEquals(list.size(), 1);
         Assertions.assertEquals(list.get(0).getId(), 2L);
@@ -59,8 +62,11 @@ class BookingRepositoryImplTest {
     void shouldBeFoundByOwnerIdAndStatus() {
         bookingRepository.save(makeBooking(1L, LocalDateTime.of(2023, 1, 1, 1, 1), LocalDateTime.of(2023, 2, 2, 2, 2)));
         bookingRepository.save(makeBooking(2L, LocalDateTime.of(2022, 1, 1, 1, 1), LocalDateTime.of(2022, 2, 2, 2, 2)));
+        int from = 0;
+        int size = 10;
 
-        List<Booking> list = bookingRepository.findByOwnerIdAndStatus(1L, BookingStatus.REJECTED, OffsetLimitPageable.of(0, 10));
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        List<Booking> list = bookingRepository.findByOwnerIdAndStatus(1L, BookingStatus.REJECTED, pageRequest);
 
         Assertions.assertEquals(list.size(), 2);
         Assertions.assertEquals(list.get(0).getId(), 1L);
@@ -71,8 +77,11 @@ class BookingRepositoryImplTest {
     void shouldBeFoundByOwnerIdAndStartIsAfter() {
         bookingRepository.save(makeBooking(1L, LocalDateTime.of(2023, 1, 1, 1, 1), LocalDateTime.of(2023, 2, 2, 2, 2)));
         bookingRepository.save(makeBooking(2L, LocalDateTime.of(2022, 1, 1, 1, 1), LocalDateTime.of(2022, 2, 2, 2, 2)));
+        int from = 0;
+        int size = 10;
 
-        List<Booking> list = bookingRepository.findByOwnerIdAndStartIsAfter(1L, OffsetLimitPageable.of(0, 10));
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        List<Booking> list = bookingRepository.findByOwnerIdAndStartIsAfter(1L, pageRequest);
 
         Assertions.assertEquals(list.size(), 1);
         Assertions.assertEquals(list.get(0).getId(), 1L);
@@ -82,8 +91,11 @@ class BookingRepositoryImplTest {
     void shouldBeFoundByOwnerIdAndStartIsBeforeAndEndIsAfter() {
         bookingRepository.save(makeBooking(1L, LocalDateTime.of(2023, 1, 1, 1, 1), LocalDateTime.of(2023, 2, 2, 2, 2)));
         bookingRepository.save(makeBooking(2L, LocalDateTime.of(2022, 1, 1, 1, 1), LocalDateTime.of(2024, 2, 2, 2, 2)));
+        int from = 0;
+        int size = 10;
 
-        List<Booking> list = bookingRepository.findByOwnerIdAndStartIsBeforeAndEndIsAfter(1L, OffsetLimitPageable.of(0, 10));
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        List<Booking> list = bookingRepository.findByOwnerIdAndStartIsBeforeAndEndIsAfter(1L, pageRequest);
 
         Assertions.assertEquals(list.size(), 1);
         Assertions.assertEquals(list.get(0).getId(), 2L);
@@ -91,6 +103,8 @@ class BookingRepositoryImplTest {
 
     @Test
     void shouldBeFoundAllByOwner() {
+        int from = 0;
+        int size = 10;
         bookingRepository.save(makeBooking(1L, LocalDateTime.of(2023, 1, 1, 1, 1), LocalDateTime.of(2023, 2, 2, 2, 2)));
         bookingRepository.save(makeBooking(2L, LocalDateTime.of(2022, 1, 1, 1, 1), LocalDateTime.of(2024, 2, 2, 2, 2)));
         User user2 = userRepository.save(User.builder().id(2L).name("Boris").email("boris@mail.com").build());
@@ -100,7 +114,8 @@ class BookingRepositoryImplTest {
                 .item(item2)
                 .build());
 
-        List<Booking> list = bookingRepository.findByOwnerId(2L, OffsetLimitPageable.of(0, 10));
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        List<Booking> list = bookingRepository.findByOwnerId(2L, pageRequest);
 
         Assertions.assertEquals(list.size(), 1);
         Assertions.assertEquals(list.get(0).getId(), 3L);

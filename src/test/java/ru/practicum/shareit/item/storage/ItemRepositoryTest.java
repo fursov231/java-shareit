@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import ru.practicum.shareit.booking.util.OffsetLimitPageable;
 import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.item.model.Item;
 
@@ -36,8 +36,11 @@ class ItemRepositoryTest {
         Item item = makeItem(1, "device");
         String text = "analytics";
         itemRepository.save(item);
+        int from = 0;
+        int size = 10;
+        PageRequest pageRequest = PageRequest.of(from / size, size);
 
-        List<Item> items = itemRepository.search(text, OffsetLimitPageable.of(0, 2));
+        List<Item> items = itemRepository.search(text, pageRequest);
 
         Assertions.assertEquals(items.get(0).getId(), item.getId());
     }

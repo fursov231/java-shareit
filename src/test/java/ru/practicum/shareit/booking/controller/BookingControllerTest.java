@@ -150,7 +150,7 @@ class BookingControllerTest {
         Booking booking1 = makeBooking(1L);
         Booking booking2 = makeBooking(2L);
 
-        when(bookingService.getByState(anyLong(), anyString(), anyInt(), anyInt()))
+        when(bookingService.getByState(anyLong(), anyString(), any()))
                 .thenReturn(List.of(booking1, booking2));
 
         mvc.perform(get("/bookings")
@@ -178,7 +178,7 @@ class BookingControllerTest {
         Booking booking1 = makeBooking(1L);
         Booking booking2 = makeBooking(2L);
 
-        when(bookingService.getByOwner(anyLong(), anyString(), anyInt(), anyInt()))
+        when(bookingService.getByOwner(anyLong(), anyString(), any()))
                 .thenReturn(List.of(booking1, booking2));
 
         mvc.perform(get("/bookings/owner")
