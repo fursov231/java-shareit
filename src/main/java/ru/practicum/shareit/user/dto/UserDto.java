@@ -13,4 +13,11 @@ public class UserDto {
     private String name;
     @Email
     private String email;
+
+    @Data
+    @AllArgsConstructor
+     public static class UserDtoResponse {
+         private Long id;
+     }
+
 }

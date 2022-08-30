@@ -8,7 +8,7 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 
 public interface ItemService {
-    List<ItemDtoWithTime> getAllItemsByOwnerId(long ownerId);
+    List<ItemDtoWithTime> getAllItemsByOwnerId(long ownerId, int from, int size);
 
     ItemDtoWithTime getItemById(long userId, long itemId);
 
@@ -18,7 +18,7 @@ public interface ItemService {
 
     void removeItem(long ownerId, long itemId);
 
-    List<Item> searchItem(long ownerId, String text);
+    List<Item> searchItem(long ownerId, String text, int from, int size);
 
     CommentDto addNewComment(long ownerId, long itemId, CommentDto commentDto);
 }
