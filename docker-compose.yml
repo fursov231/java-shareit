@@ -18,7 +18,7 @@ services:
   server:
     build: ./server
     platform: linux/amd64
-    image: server-dock
+    image: fursov231/shareit-server
     container_name: server_container
     ports:
       - "9090:9090"
@@ -33,7 +33,7 @@ services:
   gateway:
     build: ./gateway
     platform: linux/amd64
-    image: gateway-dock
+    image: fursov231/shareit-gateway
     container_name: gateway_container
     ports:
       - "8080:8080"
