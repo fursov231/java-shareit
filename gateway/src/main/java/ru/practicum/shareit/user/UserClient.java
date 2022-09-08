@@ -2,6 +2,7 @@ package ru.practicum.shareit.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -33,7 +34,7 @@ public class UserClient extends BaseClient {
     }
 
     public ResponseEntity<Object> createUser(UserRequestDto userRequestDto) {
-        return post("", userRequestDto);
+        return post("", null, userRequestDto);
     }
 
 

@@ -41,7 +41,6 @@ services:
       - server
     environment:
       SHAREIT_SERVER_URL: http://server:9090
-      #server.port: 8080
       TZ: "Europe/Moscow"
 
 

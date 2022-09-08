@@ -1,17 +1,14 @@
---drop type if exists status;
---create type status as enum ('waiting', 'approved', 'rejected', 'canceled');
-
 create table if not exists USERS
 (
-    ID    SERIAL
+    ID    BIGINT auto_increment
         primary key,
-    EMAIL CHARACTER VARYING(255) not null,
+    EMAIL CHARACTER VARYING(255) not null unique,
     NAME  CHARACTER VARYING(255) not null
 );
 
 create table if not exists REQUESTS
 (
-    ID           SERIAL
+    ID           BIGINT auto_increment
         primary key,
     CREATED_DATE TIMESTAMP              not null,
     DESCRIPTION  CHARACTER VARYING(255) not null,
@@ -22,7 +19,7 @@ create table if not exists REQUESTS
 
 create table if not exists ITEMS
 (
-    ID           SERIAL
+    ID           BIGINT auto_increment
         primary key,
     IS_AVAILABLE BOOLEAN                not null,
     DESCRIPTION  CHARACTER VARYING(255) not null,
@@ -37,7 +34,7 @@ create table if not exists ITEMS
 
 create table if not exists BOOKINGS
 (
-    ID         SERIAL
+    ID         BIGINT auto_increment
         primary key,
     END_DATE   TIMESTAMP,
     START_DATE TIMESTAMP,
@@ -52,7 +49,7 @@ create table if not exists BOOKINGS
 
 create table if not exists COMMENTS
 (
-    ID           SERIAL
+    ID           BIGINT auto_increment
         primary key,
     AUTHOR_NAME  CHARACTER VARYING(255) not null,
     CREATED_DATE TIMESTAMP              not null,
@@ -61,6 +58,3 @@ create table if not exists COMMENTS
     constraint COMMENTS_ITEMS_ID_FK
         foreign key (ITEM_ID) references ITEMS
 );
-
-create unique index USERS_EMAIL_UINDEX
-    on USERS (EMAIL);
