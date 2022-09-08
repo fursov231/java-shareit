@@ -1,6 +1,6 @@
 create table if not exists USERS
 (
-    ID    BIGINT auto_increment
+    ID    SERIAL
         primary key,
     EMAIL CHARACTER VARYING(255) not null unique,
     NAME  CHARACTER VARYING(255) not null
@@ -8,7 +8,7 @@ create table if not exists USERS
 
 create table if not exists REQUESTS
 (
-    ID           BIGINT auto_increment
+    ID           SERIAL
         primary key,
     CREATED_DATE TIMESTAMP              not null,
     DESCRIPTION  CHARACTER VARYING(255) not null,
@@ -19,7 +19,7 @@ create table if not exists REQUESTS
 
 create table if not exists ITEMS
 (
-    ID           BIGINT auto_increment
+    ID           SERIAL
         primary key,
     IS_AVAILABLE BOOLEAN                not null,
     DESCRIPTION  CHARACTER VARYING(255) not null,
@@ -34,7 +34,7 @@ create table if not exists ITEMS
 
 create table if not exists BOOKINGS
 (
-    ID         BIGINT auto_increment
+    ID         SERIAL
         primary key,
     END_DATE   TIMESTAMP,
     START_DATE TIMESTAMP,
@@ -49,7 +49,7 @@ create table if not exists BOOKINGS
 
 create table if not exists COMMENTS
 (
-    ID           BIGINT auto_increment
+    ID           SERIAL
         primary key,
     AUTHOR_NAME  CHARACTER VARYING(255) not null,
     CREATED_DATE TIMESTAMP              not null,
