@@ -1,2 +1,2 @@
-cp -rf ./tests/checkstyle.xml ./checkstyle.xml
-mvn verify -P check
+mvn install -P check,coverage
+docker-compose build
