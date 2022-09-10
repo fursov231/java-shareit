@@ -32,8 +32,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import ru.practicum.shareit.requests.controller.ItemRequestController;
 
-//@WebMvcTest(controllers = ItemRequestController.class)
+@WebMvcTest(controllers = ItemRequestController.class)
 class ItemRequestControllerTest {
     @MockBean
     private ItemRequestService itemRequestService;
