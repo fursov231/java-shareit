@@ -14,7 +14,6 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
 
-
   server:
     build: ./server
     #platform: linux/arm64/v8
@@ -26,6 +25,8 @@ services:
       - db
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/shareit
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
       TZ: "Europe/Moscow"
 
   gateway:
