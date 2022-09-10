@@ -40,7 +40,7 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> addNewComment(long ownerId, long itemId, CommentDto commentDto) {
-        return post("/" + itemId + "/comment", itemId, commentDto);
+        return post("/" + itemId + "/comment", ownerId, commentDto);
     }
 
 
@@ -49,7 +49,7 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> updateItem(long ownerId, long itemId, ItemDto itemDto) {
-        return post("/" + itemId, ownerId, itemDto);
+        return patch("/" + itemId, ownerId, itemDto);
     }
 
     public void removeItem(long ownerId, long itemId) {
@@ -57,7 +57,12 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> searchItem(long ownerId, String text, Integer from, Integer size) {
-        return get("/search?from={from}&size={size}", ownerId);
+        Map<String, Object> parameters = Map.of(
+                "text", text,
+                "from", from,
+                "size", size
+        );
+        return get("/search?text=" + text + "&from=" + from + "&size=" + size, ownerId, parameters);
     }
 
 

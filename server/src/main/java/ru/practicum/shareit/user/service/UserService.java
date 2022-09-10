@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.service;
 
+import org.springframework.http.HttpStatus;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 
@@ -14,5 +15,5 @@ public interface UserService {
 
     UserResponseDto updateUser(long userId, UserRequestDto user);
 
-    void removeUser(long userId);
+    HttpStatus removeUser(long userId);
 }

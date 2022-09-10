@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 
@@ -40,7 +41,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public void removeUser(@PathVariable long userId) {
-        userClient.removeUser(userId);
+    public ResponseEntity<Object> removeUser(@PathVariable long userId) {
+        return userClient.removeUser(userId);
     }
 }

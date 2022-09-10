@@ -34,11 +34,8 @@ public class BookingController {
 	@PatchMapping("/{bookingId}")
 	public ResponseEntity<Object> confirmRequest(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long bookingId,
 												 @RequestParam(name = "approved") Boolean status) {
-		if (status.equals(true)) {
-			return bookingClient.confirmRequest(userId, bookingId, BookingStatus.APPROVED);
-		}
-		if (status.equals(false)) {
-			return bookingClient.confirmRequest(userId, bookingId, BookingStatus.REJECTED);
+		if (status.equals(false) || status.equals(true)) {
+			return bookingClient.confirmRequest(userId, bookingId, status);
 		}
 		throw new IllegalArgumentException("Указан неверный статус брони");
 	}
@@ -55,7 +52,6 @@ public class BookingController {
 												@RequestParam(name = "state", defaultValue = "ALL") String state,
 												@PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
 												@Positive @RequestParam(name = "size", defaultValue = "10") int size) {
-		//todo
 		if (from < 0) {
 			throw new ValidationException("Значение from не может быть отрицательным");
 		}

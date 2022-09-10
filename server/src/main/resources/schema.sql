@@ -1,60 +1,69 @@
-create table if not exists USERS
+--drop type if exists status;
+--create type status as enum ('waiting', 'approved', 'rejected', 'canceled');
+
+create table if not exists users
 (
-    ID    SERIAL
+    id    bigint auto_increment
         primary key,
-    EMAIL CHARACTER VARYING(255) not null unique,
-    NAME  CHARACTER VARYING(255) not null
+    email varchar(255) not null,
+    name  varchar(255) not null
 );
 
-create table if not exists REQUESTS
+
+create table if not exists items
 (
-    ID           SERIAL
+    id           bigint auto_increment
         primary key,
-    CREATED_DATE TIMESTAMP              not null,
-    DESCRIPTION  CHARACTER VARYING(255) not null,
-    REQUESTOR_ID BIGINT                 not null,
-    constraint REQUESTS_USERS_ID_FK
-        foreign key (REQUESTOR_ID) references USERS
+    is_available boolean      not null,
+    description  varchar(255) not null,
+    name         varchar(255) not null,
+    owner_id     bigint       not null
+        constraint items_users_id_fk
+            references users,
+    request_id   bigint       not null
 );
 
-create table if not exists ITEMS
+
+create table if not exists bookings
 (
-    ID           SERIAL
+    id         bigint auto_increment
         primary key,
-    IS_AVAILABLE BOOLEAN                not null,
-    DESCRIPTION  CHARACTER VARYING(255) not null,
-    NAME         CHARACTER VARYING(255) not null,
-    OWNER_ID     BIGINT                 not null,
-    REQUEST_ID   BIGINT                 not null,
-    constraint ITEMS_REQUESTS_ID_FK
-        foreign key (REQUEST_ID) references REQUESTS,
-    constraint ITEMS_USERS_ID_FK
-        foreign key (OWNER_ID) references USERS
+    end_date   timestamp    not null,
+    start_date timestamp    not null,
+    status     varchar(255) not null,
+    booker_id  bigint       not null
+        constraint bookings_users_id_fk
+            references users,
+    item_id    bigint       not null
+        constraint bookings_items_id_fk
+            references items
 );
 
-create table if not exists BOOKINGS
+create table if not exists comments
 (
-    ID         SERIAL
+    id           bigint auto_increment
         primary key,
-    END_DATE   TIMESTAMP,
-    START_DATE TIMESTAMP,
-    STATUS     CHARACTER VARYING(255),
-    BOOKER_ID  BIGINT,
-    ITEM_ID    BIGINT,
-    constraint BOOKINGS_ITEMS_ID_FK
-        foreign key (ITEM_ID) references ITEMS,
-    constraint BOOKINGS_USERS_ID_FK
-        foreign key (BOOKER_ID) references USERS
+    author_name  varchar(255) not null,
+    created_date timestamp    not null,
+    item_id      bigint       not null
+        constraint comments_items_id_fk
+            references items,
+    text         varchar(255) not null
 );
 
-create table if not exists COMMENTS
+
+create table if not exists requests
 (
-    ID           SERIAL
+    id           bigint auto_increment
         primary key,
-    AUTHOR_NAME  CHARACTER VARYING(255) not null,
-    CREATED_DATE TIMESTAMP              not null,
-    ITEM_ID      BIGINT                 not null,
-    TEXT         CHARACTER VARYING(255) not null,
-    constraint COMMENTS_ITEMS_ID_FK
-        foreign key (ITEM_ID) references ITEMS
+    created_date timestamp    not null,
+    description  varchar(255) not null,
+    requestor_id bigint       not null
+        constraint requests_users_id_fk
+            references users
 );
+
+
+create unique index if not exists users_email_uindex
+    on users (email);
+

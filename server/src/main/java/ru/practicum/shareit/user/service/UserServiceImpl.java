@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -50,7 +51,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void removeUser(long userId) {
+    public HttpStatus removeUser(long userId) {
         userRepository.deleteById(userId);
+        return HttpStatus.OK;
     }
 }

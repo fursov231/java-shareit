@@ -35,7 +35,7 @@ public class ItemRequestClient extends BaseClient {
     }
 
     public ResponseEntity<Object> saveNewRequest(long ownerId, ItemRequestDto itemRequestDto) {
-        return post("" + ownerId, itemRequestDto);
+        return post("", ownerId, itemRequestDto);
     }
 
     public ResponseEntity<Object> getRequestsByOwnerId(long ownerId) {

@@ -3,7 +3,7 @@ version: '3.8'
 services:
   db:
     image: postgres:13.7-alpine
-    platform: linux/amd64
+    platform: linux/arm64
     container_name: postgres_container
     ports:
       - "6541:5432"
@@ -17,7 +17,7 @@ services:
 
   server:
     build: ./server
-    platform: linux/amd64
+    platform: linux/arm64/v8
     image: fursov231/shareit-server
     container_name: server_container
     ports:
@@ -26,13 +26,13 @@ services:
       - db
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/shareit
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
       TZ: "Europe/Moscow"
 
   gateway:
     build: ./gateway
-    platform: linux/amd64
+    platform: linux/arm64/v8
     image: fursov231/shareit-gateway
     container_name: gateway_container
     ports:
