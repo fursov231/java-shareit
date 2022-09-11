@@ -67,7 +67,6 @@ public class BookingController {
 													@RequestParam(name = "state", defaultValue = "ALL") String state,
 													@PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
 													@Positive  @RequestParam(name = "size", defaultValue = "10") int size) {
-		//todo
 		if (from < 0) {
 			throw new ValidationException("Значение from не может быть отрицательным");
 		}
