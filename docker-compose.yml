@@ -13,6 +13,7 @@ services:
       POSTGRES_DB: shareit
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
+      #TZ: "Europe/Moscow"
 
   server:
     build: ./server
@@ -23,8 +24,8 @@ services:
       - "9090:9090"
     depends_on:
       - db
-    environment:
-      TZ: "Europe/Moscow"
+    #environment:
+      #TZ: "Europe/Moscow"
 
   gateway:
     build: ./gateway
@@ -37,6 +38,6 @@ services:
       - server
     environment:
       SHAREIT_SERVER_URL: http://server:9090
-      TZ: "Europe/Moscow"
+      #TZ: "Europe/Moscow"
 
 
