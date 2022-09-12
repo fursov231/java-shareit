@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13.7-alpine
+    #platform: linux/arm64
+    container_name: postgres_container
+    ports:
+      - "6541:5432"
+    volumes:
+      - /var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: shareit
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      #TZ: "Europe/Moscow"
+
+  server:
+    build: ./server
+    #platform: linux/arm64/v8
+    image: fursov231/shareit-server
+    container_name: server_container
+    ports:
+      - "9090:9090"
+    depends_on:
+      - db
+    #environment:
+      #TZ: "Europe/Moscow"
+
+  gateway:
+    build: ./gateway
+    #platform: linux/arm64/v8
+    image: fursov231/shareit-gateway
+    container_name: gateway_container
+    ports:
+      - "8080:8080"
+    depends_on:
+      - server
+    environment:
+      SHAREIT_SERVER_URL: http://server:9090
+      #TZ: "Europe/Moscow"
+
+
